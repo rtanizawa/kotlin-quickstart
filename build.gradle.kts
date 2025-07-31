@@ -57,4 +57,87 @@ tasks.withType<Test> {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+}
+
+// Configure source sets for integration tests
+sourceSets {
+    create("integrationTest") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+        kotlin {
+            srcDir("src/integrationTest/kotlin")
+        }
+        resources {
+            srcDir("src/integrationTest/resources")
+        }
+    }
+}
+
+// Configure dependencies for integration tests
+dependencies {
+    "integrationTestImplementation"(sourceSets["test"].output)
+    "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-web")
+    "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-validation")
+    "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-data-jpa")
+    "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-test")
+    "integrationTestImplementation"("org.testcontainers:postgresql")
+    "integrationTestImplementation"("org.testcontainers:junit-jupiter")
+    "integrationTestImplementation"("io.kotest:kotest-runner-junit5:5.8.0")
+    "integrationTestImplementation"("io.kotest:kotest-assertions-core:5.8.0")
+    "integrationTestImplementation"("io.kotest:kotest-property:5.8.0")
+    "integrationTestImplementation"("io.kotest:kotest-framework-datatest:5.8.0")
+    "integrationTestImplementation"("io.kotest.extensions:kotest-extensions-spring:2.0.2")
+    "integrationTestImplementation"("io.mockk:mockk:1.13.8")
+}
+
+// Configure test tasks to separate unit and integration tests
+tasks.register<Test>("unitTest") {
+    description = "Runs unit tests (domain classes only)"
+    group = "verification"
+    
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    
+    useJUnitPlatform {
+        includeTags("unit")
+        excludeTags("integration")
+    }
+    
+    filter {
+        includeTestsMatching("*UnitTest*")
+        includeTestsMatching("*PropertyTest*")
+        excludeTestsMatching("*IntegrationTest*")
+    }
+}
+
+tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests (persistence and controllers)"
+    group = "verification"
+    
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath = sourceSets["integrationTest"].runtimeClasspath
+    
+    useJUnitPlatform {
+        includeTags("integration")
+        excludeTags("unit")
+    }
+    
+    filter {
+        includeTestsMatching("*IntegrationTest*")
+        excludeTestsMatching("*UnitTest*")
+        excludeTestsMatching("*PropertyTest*")
+    }
+    
+    // Integration tests depend on the application being built
+    dependsOn("testClasses")
+}
+
+// Make the default test task run only unit tests
+tasks.named("test") {
+    dependsOn("unitTest")
+}
+
+// Add integrationTest to check task
+tasks.named("check") {
+    dependsOn("integrationTest")
 } 

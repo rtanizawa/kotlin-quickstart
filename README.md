@@ -122,19 +122,43 @@ src/
 │   └── resources/
 │       ├── application.yml                   # Configuration
 │       └── db/migration/                     # Flyway migrations
-└── test/
+├── test/
+│   └── kotlin/com/example/kotlinquickstart/
+│       └── unit/                             # Unit tests (domain classes)
+│           ├── entity/
+│           └── dto/
+└── integrationTest/
     └── kotlin/com/example/kotlinquickstart/
-        ├── KotlinQuickstartApplicationTests.kt
-        └── controller/
-            └── UserControllerTest.kt         # Integration tests
+        ├── integration/                      # Integration tests
+        │   ├── KotlinQuickstartApplicationIntegrationTest.kt
+        │   ├── controller/
+        │   │   └── UserControllerIntegrationTest.kt
+        │   ├── repository/
+        │   └── service/
+        └── resources/
+            └── application-test.yml          # Test configuration
 ```
 
 ## Development
 
 ### Running Tests
 
+The project has separate unit and integration tests:
+
+#### Unit Tests (Domain classes only - Fast, no Spring context)
+```bash
+./gradlew unitTest
+```
+
+#### Integration Tests (Persistence and controllers - Slower, with Spring context and database)
+```bash
+./gradlew integrationTest
+```
+
+#### All Tests
 ```bash
 ./gradlew test
+./gradlew check
 ```
 
 ### Building the Application
