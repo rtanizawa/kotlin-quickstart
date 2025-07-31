@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class KotlinQuickstartApplication
+class CoreApplication
 
 fun main(args: Array<String>) {
-    runApplication<KotlinQuickstartApplication>(*args)
-} 
+    runApplication<CoreApplication>(*args)
+}

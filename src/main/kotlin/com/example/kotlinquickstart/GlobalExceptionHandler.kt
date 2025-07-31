@@ -1,4 +1,4 @@
-package com.example.kotlinquickstart.config.exception
+package com.example.kotlinquickstart
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

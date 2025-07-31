@@ -1,9 +1,8 @@
-package com.example.kotlinquickstart.service
+package com.example.kotlinquickstart.domain
 
-import com.example.kotlinquickstart.dto.CreateUserRequest
-import com.example.kotlinquickstart.dto.UpdateUserRequest
-import com.example.kotlinquickstart.entity.User
-import com.example.kotlinquickstart.repository.UserRepository
+import com.example.kotlinquickstart.persitence.UserEntity
+import com.example.kotlinquickstart.persitence.UserRepository
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -13,10 +12,7 @@ import io.kotest.property.Arb
 import io.kotest.property.arbitrary.string
 import io.kotest.property.arbitrary.email
 import io.kotest.property.checkAll
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.slot
-import io.mockk.verify
+import io.mockk.*
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime
@@ -39,7 +35,7 @@ class UserServiceTest : DescribeSpec({
                     email = "john.doe@example.com"
                 )
                 
-                val savedUser = User(
+                val savedUser = UserEntity(
                     id = UUID.randomUUID(),
                     name = request.name,
                     email = request.email,
@@ -93,7 +89,7 @@ class UserServiceTest : DescribeSpec({
             it("should return user when found") {
                 // Given
                 val userId = UUID.randomUUID()
-                val user = User(
+                val user = UserEntity(
                     id = userId,
                     name = "John Doe",
                     email = "john.doe@example.com",
@@ -133,7 +129,7 @@ class UserServiceTest : DescribeSpec({
             it("should update user successfully") {
                 // Given
                 val userId = UUID.randomUUID()
-                val existingUser = User(
+                val existingUser = UserEntity(
                     id = userId,
                     name = "John Doe",
                     email = "john.doe@example.com",
@@ -182,7 +178,7 @@ class UserServicePropertyTest : FunSpec({
             val userService = UserService(mockUserRepository)
             
             val request = CreateUserRequest(name = name, email = email)
-            val savedUser = User(
+            val savedUser = UserEntity(
                 id = UUID.randomUUID(),
                 name = name,
                 email = email,

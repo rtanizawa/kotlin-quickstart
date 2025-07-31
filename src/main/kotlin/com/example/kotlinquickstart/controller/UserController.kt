@@ -1,9 +1,9 @@
 package com.example.kotlinquickstart.controller
 
-import com.example.kotlinquickstart.dto.CreateUserRequest
-import com.example.kotlinquickstart.dto.UpdateUserRequest
-import com.example.kotlinquickstart.dto.UserResponse
-import com.example.kotlinquickstart.service.UserService
+import com.example.kotlinquickstart.domain.CreateUserRequest
+import com.example.kotlinquickstart.domain.UpdateUserRequest
+import com.example.kotlinquickstart.domain.UserResponse
+import com.example.kotlinquickstart.domain.UserService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

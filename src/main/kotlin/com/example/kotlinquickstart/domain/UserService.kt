@@ -1,10 +1,7 @@
-package com.example.kotlinquickstart.service
+package com.example.kotlinquickstart.domain
 
-import com.example.kotlinquickstart.dto.CreateUserRequest
-import com.example.kotlinquickstart.dto.UpdateUserRequest
-import com.example.kotlinquickstart.dto.UserResponse
-import com.example.kotlinquickstart.entity.User
-import com.example.kotlinquickstart.repository.UserRepository
+import com.example.kotlinquickstart.persitence.UserEntity
+import com.example.kotlinquickstart.persitence.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -21,7 +18,7 @@ class UserService(
             throw IllegalArgumentException("User with email ${request.email} already exists")
         }
         
-        val user = User(
+        val user = UserEntity(
             name = request.name,
             email = request.email
         )
@@ -67,14 +64,14 @@ class UserService(
         }
         userRepository.deleteById(id)
     }
-    
-    private fun User.toUserResponse(): UserResponse {
-        return UserResponse(
-            id = this.id!!,
-            name = this.name,
-            email = this.email,
-            createdAt = this.createdAt,
-            updatedAt = this.updatedAt
-        )
-    }
-} 
+}
+
+private fun UserEntity.toUserResponse(): UserResponse {
+    return UserResponse(
+        id = this.id!!,
+        name = this.name,
+        email = this.email,
+        createdAt = this.createdAt,
+        updatedAt = this.updatedAt
+    )
+}

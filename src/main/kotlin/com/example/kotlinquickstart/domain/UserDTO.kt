@@ -1,4 +1,4 @@
-package com.example.kotlinquickstart.dto
+package com.example.kotlinquickstart.domain
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
