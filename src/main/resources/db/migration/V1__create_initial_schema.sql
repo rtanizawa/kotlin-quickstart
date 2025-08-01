@@ -8,7 +8,7 @@ CREATE TABLE users (
 
 CREATE INDEX idx_users_email ON users(email);
 
-CREATE TABLE device (
+CREATE TABLE devices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
