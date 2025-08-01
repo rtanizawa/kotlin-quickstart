@@ -6,8 +6,12 @@ CREATE TABLE users (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create index on email for faster lookups
 CREATE INDEX idx_users_email ON users(email);
 
--- Create index on created_at for sorting
-CREATE INDEX idx_users_created_at ON users(created_at);
+CREATE TABLE device (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_device_user_id FOREIGN KEY (user_id) REFERENCES users(id)
+);
