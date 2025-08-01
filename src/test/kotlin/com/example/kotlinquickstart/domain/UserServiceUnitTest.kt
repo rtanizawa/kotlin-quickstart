@@ -76,27 +76,23 @@ class UserServiceUnitTest : FunSpec({
 
     context("updateUser") {
         test("should throw exception when user not found") {
-            // Given
             val userId = UUID.randomUUID()
             val request = UpdateUserRequest(
                 name = "John Smith",
                 email = "john.smith@example.com"
             )
 
-            every { mockUserRepository.findById(userId) } returns java.util.Optional.empty()
+            every { mockUserRepository.findById(userId) } returns Optional.empty()
 
-            // When & Then
             val exception = shouldThrow<IllegalArgumentException> {
                 userService.updateUser(userId, request)
             }
 
             exception.message shouldContain "not found"
 
-            verify {
-                mockUserRepository.findById(userId)
-                mockUserRepository.existsByEmail(any()) wasNot Called
-                mockUserRepository.save(any()) wasNot Called
-            }
+            verify(exactly = 1) { mockUserRepository.findById(userId) }
+            verify(exactly = 0) { mockUserRepository.existsByEmail(any()) }
+            verify(exactly = 0) { mockUserRepository.save(any()) }
         }
 
         test("should throw exception when new email already exists") {

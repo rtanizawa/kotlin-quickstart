@@ -104,8 +104,8 @@ class UserControllerIntegrationTest(
     test("should update user successfully") {
         // First create a user
         val createUserRequest = CreateUserRequest(
-            name = "John Doe",
-            email = "john.doe@example.com"
+            name = "John Smith",
+            email = "john.smith@example.com"
         )
 
         val createResult = mockMvc.perform(
@@ -118,8 +118,8 @@ class UserControllerIntegrationTest(
 
         // Then update the user
         val updateUserRequest = UpdateUserRequest(
-            name = "John Smith",
-            email = "john.smith@example.com"
+            name = "Joe Smart",
+            email = "joe.smart@example.com"
         )
 
         val result = mockMvc.perform(
@@ -128,8 +128,8 @@ class UserControllerIntegrationTest(
                 .content(objectMapper.writeValueAsString(updateUserRequest))
         )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.name").value("John Smith"))
-            .andExpect(jsonPath("$.email").value("john.smith@example.com"))
+            .andExpect(jsonPath("$.name").value("Joe Smart"))
+            .andExpect(jsonPath("$.email").value("joe.smart@example.com"))
             .andReturn()
 
         result.response.status shouldBe 200

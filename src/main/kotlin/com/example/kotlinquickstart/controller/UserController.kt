@@ -23,14 +23,18 @@ class UserController(
     }
     
     @GetMapping("/{id}")
-    fun getUserById(@PathVariable id: UUID): ResponseEntity<UserResponse> {
-        val user = userService.getUserById(id)
-        return ResponseEntity.ok(user)
+    fun findUserById(@PathVariable id: UUID): ResponseEntity<*> {
+        val user = userService.findUserById(id)
+        return if (user == null) {
+            ResponseEntity.notFound().build<UserResponse>()
+        } else {
+            ResponseEntity.ok(user)
+        }
     }
     
     @GetMapping
-    fun getAllUsers(): ResponseEntity<List<UserResponse>> {
-        val users = userService.getAllUsers()
+    fun findAllUsers(): ResponseEntity<List<UserResponse>> {
+        val users = userService.findAllUsers()
         return ResponseEntity.ok(users)
     }
     
