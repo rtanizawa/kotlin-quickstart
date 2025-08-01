@@ -1,10 +1,11 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
   
   flyway:
@@ -14,4 +15,4 @@ spring:
 logging:
   level:
     org.hibernate.SQL: WARN
-    org.hibernate.type.descriptor.sql.BasicBinder: WARN 
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN

@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.tasks.Copy
 
 plugins {
     id("org.springframework.boot") version "3.2.0"
@@ -33,8 +34,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
     testImplementation("io.kotest:kotest-property:5.8.0")
     testImplementation("io.kotest:kotest-framework-datatest:5.8.0")
-    testImplementation("io.kotest.extensions:kotest-extensions-spring:2.0.2")
-    
+
     // MockK for mocking
     testImplementation("io.mockk:mockk:1.13.8")
     
@@ -73,21 +73,32 @@ sourceSets {
     }
 }
 
+// Configure resource processing for integration tests
+tasks.named("processIntegrationTestResources", Copy::class.java) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 // Configure dependencies for integration tests
 dependencies {
     "integrationTestImplementation"(sourceSets["test"].output)
+    "integrationTestImplementation"("org.postgresql:postgresql")
+
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-web")
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-validation")
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-data-jpa")
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-test")
+
     "integrationTestImplementation"("org.testcontainers:postgresql")
     "integrationTestImplementation"("org.testcontainers:junit-jupiter")
+
     "integrationTestImplementation"("io.kotest:kotest-runner-junit5:5.8.0")
     "integrationTestImplementation"("io.kotest:kotest-assertions-core:5.8.0")
     "integrationTestImplementation"("io.kotest:kotest-property:5.8.0")
     "integrationTestImplementation"("io.kotest:kotest-framework-datatest:5.8.0")
-    "integrationTestImplementation"("io.kotest.extensions:kotest-extensions-spring:2.0.2")
+    "integrationTestImplementation"("io.kotest.extensions:kotest-extensions-spring:1.1.2")
+
     "integrationTestImplementation"("io.mockk:mockk:1.13.8")
+
 }
 
 // Configure test tasks to separate unit and integration tests
@@ -98,15 +109,9 @@ tasks.register<Test>("unitTest") {
     testClassesDirs = sourceSets["test"].output.classesDirs
     classpath = sourceSets["test"].runtimeClasspath
     
-    useJUnitPlatform {
-        includeTags("unit")
-        excludeTags("integration")
-    }
-    
-    filter {
-        includeTestsMatching("*UnitTest*")
-        includeTestsMatching("*PropertyTest*")
-        excludeTestsMatching("*IntegrationTest*")
+    // Ensure tests are discovered
+    testLogging {
+        events("passed", "skipped", "failed")
     }
 }
 
@@ -116,20 +121,12 @@ tasks.register<Test>("integrationTest") {
     
     testClassesDirs = sourceSets["integrationTest"].output.classesDirs
     classpath = sourceSets["integrationTest"].runtimeClasspath
-    
-    useJUnitPlatform {
-        includeTags("integration")
-        excludeTags("unit")
-    }
-    
-    filter {
-        includeTestsMatching("*IntegrationTest*")
-        excludeTestsMatching("*UnitTest*")
-        excludeTestsMatching("*PropertyTest*")
-    }
-    
+
     // Integration tests depend on the application being built
     dependsOn("testClasses")
+
+    systemProperty("kotest.framework.debug", "true") // enable Kotest debug logs
+    systemProperty("kotest.framework.discovery.parallel.enabled", "false")
 }
 
 // Make the default test task run only unit tests
@@ -140,4 +137,4 @@ tasks.named("test") {
 // Add integrationTest to check task
 tasks.named("check") {
     dependsOn("integrationTest")
-} 
+}
